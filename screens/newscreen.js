@@ -18,7 +18,7 @@ export default class Newscreen extends Component {
   };
   async getData() {
     const response = await axios.get('https://newsapi.org/v2/top-headlines?country=th&apiKey=b2bb00c9b3604027a2c2531fd7f95f86')
-    this.setState({
+    this.setState({ 
       data: response.data,
       articles: response.data.articles,
       totalResults: response.data.totalResults,
@@ -68,6 +68,7 @@ export default class Newscreen extends Component {
     this.getData();
   }
   render() {
+    
     return (
       <View >
         <SegmentedControlTab

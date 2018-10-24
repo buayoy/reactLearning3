@@ -62,8 +62,6 @@ export default class Loginscreen extends Component {
         }catch(error){
           console.log(error);
       }
-    
-    
   }
   _Register = () => {
       this.props.navigation.navigate('Register')

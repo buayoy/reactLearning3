@@ -1,8 +1,18 @@
 import React, { Component } from 'react';
-import { Alert, AppRegistry, Platform, StyleSheet, Text, TouchableHighlight, TouchableOpacity, TouchableNativeFeedback, TouchableWithoutFeedback, View } from 'react-native';
+import { AsyncStorage,TextInput, Text, View, Button ,StyleSheet ,AppRegistry} from 'react-native';
+import { Dropdown } from 'react-native-material-dropdown';
 
 export default class Aboutscreen extends Component {
 
+  constructor(props) {
+    super(props);
+    this.state = {
+        myKey: null,
+        value:null,
+        value2:null,
+        user:{}
+    }
+  }
     static navigationOptions = {
         title: 'About Page',
       };
@@ -12,9 +22,15 @@ export default class Aboutscreen extends Component {
   }
 
   render() {
+    AsyncStorage.getItem('user').then(user=>{
+      this.setState({
+        user:JSON.parse(user)
+      });
+    });
     return (
-      <View style={styles.container}>
-            <Text style={styles.buttonText}>Welcome to App (aboutscreen)</Text>
+      <View>
+    <Text style={{fontSize:18 , fontWeight:'bold'}}>{/*{this.state.user.phone}*/}test</Text>
+
       </View>
     );
   }
@@ -28,7 +44,12 @@ const styles = StyleSheet.create({
   buttonText: {
     padding: 20,
     color: 'black'
-  }
+  },
+  text: {
+    fontSize: 30,
+    alignSelf: 'center',
+    color: 'red'
+ }
 });
 
 // skip this line if using Create React Native App

@@ -1,23 +1,31 @@
 //import liraries
 import React, { Component } from 'react';
 import { View, Text, StyleSheet,FlatList,Image } from 'react-native';
+import { FormLabel, FormInput, FormValidationMessage,Header, Button ,Card } from 'react-native-elements'
+import Logo from '../logo/index'
 
 // create a component
-class AppHeader extends Component {
-    HeaderRender(){
-        return (
-            <View style={{flex:1,backgroundColor: '#105B2F'}}>
-                <Image style={{ width: '100%', height: 90, resizeMode: 'contain', marginTop: 40, marginBottom: 40 }} source={require('../img/header.png')} />
-            </View>
-        )
-    }
+export default class AppHeader extends Component {
+    
+    static navigationOptions = {
+        
+        headerTitle: <Logo/>,
+        headerStyle: {
+          backgroundColor: '#006600',
+        },
+        headerTintColor: '#fff',
+        headerTitleStyle: {
+          fontWeight: 'bold',
+        },
+      };
     render() {
         return (
-            <View style={{flex:0.15,justifyContent:'flex-start'}}>
-            <FlatList  
-            ListHeaderComponent={this.HeaderRender}/>
-                <Text style={styles.title}>ยินดีต้อนรับ</Text>
-            </View>
+           <Header
+  placement="left"
+  leftComponent={{ icon: 'menu', color: '#fff' }}
+  centerComponent={{ text: 'MY TITLE', style: { color: '#fff' } }}
+  rightComponent={{ icon: 'home', color: '#fff' }}
+/>
         );
     }
 }
@@ -28,7 +36,7 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: '#2c3e50',
+        backgroundColor: '#105B2F',
     },
     title:{
         fontSize:40
@@ -38,4 +46,3 @@ const styles = StyleSheet.create({
 });
 
 //make this component available to the app
-export default AppHeader;
