@@ -136,6 +136,7 @@ export default class Profilescreen extends Component {
   componentDidMount(){
     this.getuser();
   }
+  
   render() {
    
 
@@ -200,7 +201,8 @@ export class EditProfilescreen extends Component {
       phone:'',
       citizen:'',
       name:'',
-      lastname:''
+      lastname:'',
+      imageSources:null
     }
   }
   
@@ -343,6 +345,10 @@ _Postproblem = async () => {
     subdistricts = subdistricts.substring(1, subdistricts.length - 1);
     await this.setState({ subdistrict: subdistricts });
 
+    var imageSources = await AsyncStorage.getItem("imageSource");
+    // imageSources = imageSources.substring(1, imageSources.length - 1);
+    await this.setState({ imageSource: imageSources });
+
   }
 
 componentDidMount(){
@@ -360,7 +366,7 @@ componentDidMount(){
               <Image source={require('../img/profilepic.jpg')} resizeMode='stretch' style={{ justifyContent:'flex-start', width: wp('100%'), height: hp('20%') , marginLeft: wp('0%') , borderRadius: hp('0%')}} />
               <Text style={{fontSize:20,marginTop:wp('4%'),marginLeft: wp('41%'),color:'#006600',fontWeight:'bold'}}>{this.state.name} {this.state.lastname}</Text>
               <TouchableHighlight style={{ marginTop:wp('-27%') , marginLeft:wp('7%') }}>
-              <Image style={ styles.image } source={{ uri: 'http://www.free-avatars.com/data/media/37/cat_avatar_0597.jpg' }} />
+              <Image style={ styles.image } source={ this.state.imageSources} />
               
               </TouchableHighlight>
 

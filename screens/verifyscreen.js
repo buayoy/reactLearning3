@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import {
-  Picker,Alert,Linking, AppRegistry, Platform, StyleSheet, Text,
+    Image,Picker,Alert,Linking, AppRegistry, Platform, StyleSheet, Text,
   TouchableHighlight, TouchableOpacity, TouchableNativeFeedback,
   TouchableWithoutFeedback, View ,AsyncStorage,TextInput,ScrollView
 } from 'react-native';
@@ -15,6 +15,8 @@ import axios from 'axios';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Logo from '../components/logo/index'
 import { Dropdown } from 'react-native-material-dropdown';
+import ImageSelecter from 'react-native-image-picker';
+
 
 
 const width = '100%';
@@ -253,10 +255,6 @@ refreshScreen() {
     return (
     
       <View style={styles.container}>
-        <Text>Last Refresh: {this.state.lastRefresh}</Text>
-      <Button onPress={this.refreshScreen} title="Refresh Screen" />
-      <Button title="TestReFresh" onPress={this.goBack.bind(this)} />
-      <Button onPress={()=> this.props.navigation.navigate('Home')}/>
       <View style={{justifyContent:'center',alignItems:'center',flexDirection:'column'}}>
       <Icon  name="ios-person-add" size={80} color="#006600"  />
       <Text style={{fontWeight:'bold', fontSize:30 ,color:'#006600',marginTop:-15,marginBottom:20}}>สมัครสมาชิก</Text>
@@ -476,7 +474,9 @@ export class AddProfile extends Component {
       phone:this.props.navigation.state.params.credentail.phone2,
       citizen:this.props.navigation.state.params.credentail.citizen2,
       name:'',
-      lastname:''
+      lastname:'',
+      imageSource:null,
+
   }
 
   _Postproblem = async () => {
@@ -555,9 +555,9 @@ export class AddProfile extends Component {
   this.props.navigation.navigate('Home')
 
   }
-  _SaveUser = async () => {
+  _SaveUser = async (event) => {
     try{
-      const {name,subdistrict,village,district,province,lastname,citizen} = this.state
+      const {name,subdistrict,village,district,province,lastname,citizen,imageSource} = this.state
       const response =  await axios.post('http://1.179.246.102/npcr_admin_api/public/api/saveuser/post', {
         save_name: this.state.name,
         save_phone: this.state.phone,
@@ -599,8 +599,15 @@ export class AddProfile extends Component {
     let village1 = this.state.village
     AsyncStorage.setItem('village',JSON.stringify(village1))
 
+    let imageSource1 = this.state.imageSource
+    AsyncStorage.setItem('imageSource',(imageSource1))
+    const problem_id = response.data.id; // use insert id fk fileupload
+    //alert(response.data.id);
+    this.uploadPhoto(problem_id);
+    // const saveuser_id = response.data.id;
+    // this.uploadPhoto(saveuser_id);
     this.props.navigation.push('Home')
-
+    
 
     Alert.alert(this.state.name+this.state.phone+this.state.citizen+this.state.lastname+this.state.province+this.state.district+this.state.subdistrict+this.state.village)
     }catch(error){
@@ -623,6 +630,46 @@ export class AddProfile extends Component {
   async showVerifyData(){
    
   }
+ async uploadPhoto(problem_id) {
+        //problem_id = 4;
+        const response = await axios.post('http://1.179.246.102/npcr_admin_api/public/api/problem/upload_image?problem_id='+problem_id, {
+            // problem_id: problem_id,
+            imageData: this.state.imageSource.uri
+        });
+      
+        Alert.alert(JSON.stringify(problem_id));
+    }
+
+    _SelectCameraRoll = () => {
+
+        const options = {
+            quality: 1.0,
+            maxWidth: 500,
+            maxHeight: 500,
+            storageOptions: {
+                skipBackup: true
+            }
+        };
+        ImageSelecter.showImagePicker(options, (response) => {
+            console.log('Response = ', response);
+
+            if (response.didCancel) {
+                console.log('User cancelled image picker');
+            } else if (response.error) {
+                console.log('ImagePicker Error: ', response.error);
+            } else {
+                // const source = { uri: `data:${response.data.mime};base64,` + response.data };
+                // let source = { uri: response.uri };
+                this.setState({
+                    imageSource: {
+                        uri: 'data:image/jpeg;base64,' + response.data,
+                    }
+                });
+                //alert(this.state.imageSource.uri);
+                //this.uploadPhoto();
+            }
+        });
+    };
   render() {
       return (
        
@@ -758,7 +805,6 @@ export class AddProfile extends Component {
             
           <Text style={styles.labelStyle}>นามสกุล</Text>
           <TextInput
-           
             ref={lastname => (this.lastname = lastname)}
             //keyboardType={'email-address'}
             autoCapitalize={'none'}
@@ -837,6 +883,18 @@ export class AddProfile extends Component {
                       }
                       keyboardType='email-address'
                   /> */}
+                   <Button
+                        backgroundColor='#00802b'
+                        buttonStyle={{ marginTop: 20, borderRadius: 5 }}
+                        icon={{ name: 'camera', type: 'font-camera' }}
+                        title='เพิ่มรูปภาพ'
+                        onPress={this._SelectCameraRoll}
+                    />
+                    <View style={{alignItems:'center'}}>
+                        { this.state.imageSource === null ? <Text></Text> :
+                            <Image style={styles.avatar} source={this.state.imageSource} />
+                        }
+                    </View>
                   <View style={styles.setpositionbutton}>
                       <Button
                           backgroundColor='#00802b'
@@ -856,18 +914,18 @@ export class AddProfile extends Component {
                           }}
                       />
                   </View>
+                  
           
            <View style={{ flexDirection:'row' ,flex:1 ,justifyContent:'center' ,marginBottom:10}}>
           
          </View>
 
          </Card>
+
         </KeyboardAwareScrollView>
 
         </View>
-              )
-              }
-             
+              )}
           </View>
       );
   }
@@ -977,5 +1035,12 @@ button: {
 buttonText: {
   padding: 40,
   color: 'white'
-}
+},
+avatar: {
+    //borderRadius: 75,
+    margin: 10,
+    marginLeft: 15,
+    width: 150,
+    height: 150
+  }
 });

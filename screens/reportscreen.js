@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import { Alert, Platform, StyleSheet, Text, View,NativeModules, Picker } from 'react-native';
+import { Alert, Platform, StyleSheet, Text, View, Picker,PixelRatio,ScrollView, Image } from 'react-native';
 import { Button } from 'react-native-elements'
-import { FormLabel, FormInput, FormValidationMessage, Badge } from 'react-native-elements'
+import { FormLabel, FormInput, FormValidationMessage, Badge , Card } from 'react-native-elements'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import Icon from 'react-native-vector-icons/Ionicons';
 import Logo from '../components/logo';
@@ -11,9 +11,15 @@ import ImageSelecter from 'react-native-image-picker';
 import DatePicker from 'react-native-datepicker'
 // import renderIf from './renderIf'
 import axios from 'axios';
-var ImagePicker2 = NativeModules.ImageCropPicker;
 
 const width = '100%';
+import {
+    widthPercentageToDP as wp,
+    heightPercentageToDP as hp,
+    listenOrientationChange as loc,
+    removeOrientationListener as rol
+  } from 'react-native-responsive-screen';
+
 
 
 export default class ReportScreen_create extends Component {
@@ -45,8 +51,7 @@ export default class ReportScreen_create extends Component {
         getsubdistrict: [],
         getvillage: [],
         hide: false,
-        image: null
-
+        imageSource: null,
     }
 
     _Postproblem = async () => {
@@ -58,11 +63,14 @@ export default class ReportScreen_create extends Component {
             district: this.state.district,
             subdistrict: this.state.subdistrict,
             village: this.state.village,
-            // created_at: Math.floor(Date.now()),
-            status: 'ยังไม่ดำเนินการ',
+            status: 'ยังไม่ได้ดำเนินการ',
         });
+
         // alert(JSON.stringify(response));
-        //response.data.id // use insert id fileupload
+        const problem_id = response.data.id; // use insert id fk fileupload
+        //alert(response.data.id);
+        this.uploadPhoto(problem_id);
+
         if (response.data.data == 'ok') {
             Alert.alert('แจ้งปัญหาเรียบร้อยแล้ว', 'ปัญหาที่คุณแจ้งจะถูกบันทึกไปยังปัญหาของฉัน', [{ text: 'ตกลง' }]);
             this.props.navigation.navigate('Report_myproblem');
@@ -71,6 +79,47 @@ export default class ReportScreen_create extends Component {
         }
 
     }
+
+    async uploadPhoto(problem_id) {
+        //problem_id = 4;
+        const response = await axios.post('http://1.179.246.102/npcr_admin_api/public/api/problem/upload_image?problem_id='+problem_id, {
+            // problem_id: problem_id,
+            imageData: this.state.imageSource.uri
+        });
+      
+        Alert.alert(JSON.stringify(problem_id));
+    }
+
+    _SelectCameraRoll = () => {
+
+        const options = {
+            quality: 1.0,
+            maxWidth: 500,
+            maxHeight: 500,
+            storageOptions: {
+                skipBackup: true
+            }
+        };
+        ImageSelecter.showImagePicker(options, (response) => {
+            console.log('Response = ', response);
+
+            if (response.didCancel) {
+                console.log('User cancelled image picker');
+            } else if (response.error) {
+                console.log('ImagePicker Error: ', response.error);
+            } else {
+                // const source = { uri: `data:${response.data.mime};base64,` + response.data };
+                // let source = { uri: response.uri };
+                this.setState({
+                    imageSource: {
+                        uri: 'data:image/jpeg;base64,' + response.data,
+                    }
+                });
+                //alert(this.state.imageSource.uri);
+                //this.uploadPhoto();
+            }
+        });
+    };
 
     async getData() {
         const response = await axios.get('http://1.179.246.102/npcr_admin_api/public/api/problem/getprovince');
@@ -109,60 +158,12 @@ export default class ReportScreen_create extends Component {
         // Alert.alert(itemValue);
     }
 
-
-
-    _SelectCameraRoll = () => {
-        const options = {
-            title: 'Select Image',
-            storageOptions: {
-                skipBackup: true,
-                path: 'images',
-            },
-        };
-        ImageSelecter.showImagePicker(options, (response) => {
-            console.log('Response = ', response);
-          
-            if (response.didCancel) {
-              console.log('User cancelled image picker');
-            } else if (response.error) {
-              console.log('ImagePicker Error: ', response.error);
-            }  else {
-              const source = { uri: response.uri };
-          
-              // You can also display the image using data:
-              // const source = { uri: 'data:image/jpeg;base64,' + response.data };
-          
-              this.setState({
-                //avatarSource: source,
-              });
-            }
-          });
-    };
+    
 
     componentDidMount() {
         this.getData();
     }
-    pickSingle(cropit, circular = false) {
-        ImagePicker.openPicker({
-          width: 300,
-          height: 300,
-          cropping: cropit,
-          cropperCircleOverlay: circular,
-          compressImageMaxWidth: 640,
-          compressImageMaxHeight: 480,
-          compressImageQuality: 0.5,
-          compressVideoPreset: 'MediumQuality',
-          includeExif: true,
-        }).then(image => {
-          console.log('received image', image);
-          this.setState({
-            image: { uri: image.path, width: image.width, height: image.height, mime: image.mime }
-          });
-        }).catch(e => {
-          console.log(e);
-          Alert.alert(e.message ? e.message : e);
-        });
-      }
+
     render() {
         let data = [{
             value: 'เป็นผู้แจ้งเหตุ',
@@ -175,7 +176,9 @@ export default class ReportScreen_create extends Component {
                 <Text style={styles.welcome}><Icon name="ios-megaphone" size={40} color='#00802b' />  แจ้งปัญหาเน็ตประชารัฐ</Text>
                 <View style={styles.lineStylew1} />
                 <View style={styles.lineStylew2} />
-                <KeyboardAwareScrollView>
+                
+                <Card containerStyle={{marginBottom:wp('25%') , borderWidth:1}}>
+                <ScrollView>
                     <FormLabel labelStyle={{ fontSize: 20, margin: 5 }} >
                         1. ประเภทปัญหา
                     </FormLabel>
@@ -260,7 +263,7 @@ export default class ReportScreen_create extends Component {
                         7. เบอร์ติดต่อกลับ
                     </FormLabel>
                     <FormInput
-                        inputStyle={{ borderColor: 'grey', marginTop: 5, borderWidth: 1, borderRadius: 5 }}
+                        inputStyle={{ borderColor: 'grey', marginTop: 5, borderWidth: 1, borderRadius: 5, width:wp('100%') }}
                         maxLength={10}
                         ref={tel => this.tel = tel}
                         placeholder=''
@@ -276,8 +279,12 @@ export default class ReportScreen_create extends Component {
                         icon={{ name: 'camera', type: 'font-camera' }}
                         title='เพิ่มรูปภาพ'
                         onPress={this._SelectCameraRoll}
-                        // onPress={() => this.pickSingle(false)}
                     />
+                    <View>
+                        { this.state.imageSource === null ? <Text></Text> :
+                            <Image style={styles.avatar} source={this.state.imageSource} />
+                        }
+                    </View>
                     <View style={styles.setpositionbutton}>
                         <Button
                             backgroundColor='#00802b'
@@ -297,7 +304,8 @@ export default class ReportScreen_create extends Component {
                             }}
                         />
                     </View>
-                </KeyboardAwareScrollView>
+                </ScrollView>
+                </Card>
             </View>
         );
     }
@@ -382,5 +390,12 @@ const styles = StyleSheet.create({
     buttonText: {
         padding: 40,
         color: 'white'
+    },
+    avatar: {
+      //borderRadius: 75,
+      margin: 10,
+      marginLeft: 15,
+      width: 150,
+      height: 150
     }
 });

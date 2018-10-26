@@ -94,9 +94,7 @@ const HomeStack = createStackNavigator({
   
  
 });
-const RNImageStack = createStackNavigator({
-  RNImage:{screen:FlatListDemo}
-})
+
 
 const ReportStack = createStackNavigator({
   Report: {
@@ -166,7 +164,6 @@ const TabNavigator = createBottomTabNavigator({
   Product: ProductStack,
   Camera:CameraStack,
   Reprot:ReportStack,
-  RNImage:RNImageStack
   
 },
 {
