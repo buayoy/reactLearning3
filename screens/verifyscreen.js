@@ -599,7 +599,7 @@ export class AddProfile extends Component {
     let village1 = this.state.village
     AsyncStorage.setItem('village',JSON.stringify(village1))
 
-    this.props.navigation.navigate('Home')
+    this.props.navigation.push('Home')
 
 
     Alert.alert(this.state.name+this.state.phone+this.state.citizen+this.state.lastname+this.state.province+this.state.district+this.state.subdistrict+this.state.village)

@@ -30,6 +30,7 @@ import AppHeader from './components/appheader';
 import Workshop15 from './screens/Workshop15';
 import Profile2screen from './screens/profile2screen';
 import ReportScreen_create from './screens/reportscreen';
+import FlatListDemo from './screens/testImageAsyncStrorage';
 
 // const HeaderStack = createStackNavigator({
 //   Header:{
@@ -88,10 +89,14 @@ const HomeStack = createStackNavigator({
   EditProfile:{
     screen:EditProfilescreen
   }
+
   
   
  
 });
+const RNImageStack = createStackNavigator({
+  RNImage:{screen:FlatListDemo}
+})
 
 const ReportStack = createStackNavigator({
   Report: {
@@ -160,7 +165,8 @@ const TabNavigator = createBottomTabNavigator({
   New: NewStack,
   Product: ProductStack,
   Camera:CameraStack,
-  Reprot:ReportStack
+  Reprot:ReportStack,
+  RNImage:RNImageStack
   
 },
 {

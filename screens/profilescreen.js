@@ -141,9 +141,16 @@ export default class Profilescreen extends Component {
 
     return (
       <View style={styles.container}>
+
               <Image source={require('../img/profilepic.jpg')} resizeMode='stretch' style={{ justifyContent:'flex-start', width: wp('100%'), height: hp('20%') , marginLeft: wp('0%') , borderRadius: hp('0%')}} />
-              <Text style={{fontSize:20,marginTop:wp('4%'),marginLeft: wp('60%'),color:'#006600',fontWeight:'bold'}}>{this.state.name} {this.state.lastname}</Text>
-      <View style={{marginTop:wp('30%')}}>
+              <TouchableHighlight style={{ marginTop:wp('-15%') , marginLeft:wp('7%') }}>
+              <Image style={ styles.image } source={{ uri: 'http://www.free-avatars.com/data/media/37/cat_avatar_0597.jpg' }} />
+              
+              </TouchableHighlight>
+
+              
+              <Text style={{fontSize:20,marginTop:wp('-15%'),marginLeft: wp('40%'),color:'#006600',fontWeight:'bold'}}>{this.state.name} {this.state.lastname}</Text>
+      <View style={{marginTop:wp('15%')}}>
       <View>
       <Text style={styles.labelstyle}>ชื่อสกุล</Text><Text style={styles.fontstyle}>{this.state.name} {this.state.lastname}</Text>
       <View style={styles.lineStylew3}/>
@@ -168,6 +175,7 @@ export default class Profilescreen extends Component {
       <View style={styles.lineStylew3}/>
 
       </View>
+      <Button onPress={()=>{this.props.navigation.goBack()}}/>
       </View>
       
     );
@@ -348,10 +356,31 @@ componentDidMount(){
 
     return (
       
-        <View style={styles.container}>
+        <ScrollView style={styles.container}>
               <Image source={require('../img/profilepic.jpg')} resizeMode='stretch' style={{ justifyContent:'flex-start', width: wp('100%'), height: hp('20%') , marginLeft: wp('0%') , borderRadius: hp('0%')}} />
-              <Text style={{fontSize:20,marginTop:wp('4%'),marginLeft: wp('60%'),color:'#006600',fontWeight:'bold'}}>{this.state.name} {this.state.lastname}</Text>
+              <Text style={{fontSize:20,marginTop:wp('4%'),marginLeft: wp('41%'),color:'#006600',fontWeight:'bold'}}>{this.state.name} {this.state.lastname}</Text>
+              <TouchableHighlight style={{ marginTop:wp('-27%') , marginLeft:wp('7%') }}>
+              <Image style={ styles.image } source={{ uri: 'http://www.free-avatars.com/data/media/37/cat_avatar_0597.jpg' }} />
+              
+              </TouchableHighlight>
 
+              <TouchableOpacity
+       style={{
+       borderWidth:1,
+       borderColor:'#739852',
+       alignItems:'center',
+       justifyContent:'center',
+       width:50,
+       height:50,
+       backgroundColor:'#739852',
+       borderRadius:100,
+       marginLeft:wp('28%'),
+       marginTop:wp('-12%')
+     }}
+ >
+   <Icon name={"image"}  size={30} color="#FFFFFF" />
+ </TouchableOpacity>
+ <Button onPress={()=>{ this.props.navigation.goBack()}}/>
               <FormLabel labelStyle={{ fontSize: 20, margin: 5 }} >
                         เลือกจังหวัด
                     </FormLabel>
@@ -424,7 +453,7 @@ componentDidMount(){
                   </View>
           
 
-      </View>
+      </ScrollView>
       
       );
   }
@@ -558,7 +587,27 @@ borderRadius: 80,
 buttonText: {
 padding: 40,
 color: 'white'
-}
+},
+circle:{
+  borderWidth:1,
+  borderColor:'rgba(0,0,0,0.2)',
+  alignItems:'center',
+  justifyContent:'center',
+  width:100,
+  height:100,
+  backgroundColor:'#fff',
+  borderRadius:100,
+},
+imageContainer: {
+  height:128,
+  width: 128,
+  borderRadius: 64
+},
+image: {
+  height:128,
+  width: 128,
+  borderRadius: 64
+},
 });
 const width = '100%';
  

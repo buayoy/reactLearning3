@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Alert,ActivityIndicator, AppRegistry, Platform, StyleSheet, Text,FlatList, TouchableHighlight, TouchableOpacity, TouchableNativeFeedback, TouchableWithoutFeedback, View } from 'react-native';
 import axios from "axios";
 import { List, ListItem } from 'react-native-elements';
+import { FormLabel,SearchBar, FormInput, FormValidationMessage ,Card } from 'react-native-elements'
 import Logo from '../components/logo/index';
 
 export default class Productscreen extends Component {
@@ -33,6 +34,17 @@ export default class Productscreen extends Component {
   componentDidMount(){
     this.getData();
   }
+  renderHeader = () => {    
+    return (      
+      <SearchBar
+      round
+      searchIcon={{ size: 24 }}
+      onChangeText={this.response.data}
+      // onClear={''}
+      placeholder='Type Here...' />
+    );  
+  };
+  
   _renderItem = ({item}) =>{
     return (
       <ListItem
@@ -53,19 +65,21 @@ export default class Productscreen extends Component {
       <View>
       {
         this.state.loading ? (
-          <ActivityIndicator size="small" color="#00ff00" />
+          <ActivityIndicator size="small" color="#00ff00"  />
         ):(
           <List containerStyle={{marginTop:0}}>
-      
+        
           <FlatList
-          
+          // renderHeader={this.renderHeader}
           data={this.state.data}
+          ListHeaderComponent={this.renderHeader}
           // extraData={this.state}
           keyExtractor={item => item.id}
           renderItem={this._renderItem}
           onRefresh={()=>{this._onRefresh()}}
           refreshing={this.state.loading}
         />
+        
         </List>
 )
       }
